@@ -1,0 +1,37 @@
+{
+  "image": "17.png",
+  "name": "Snake bros #17",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Platinum"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Blue"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Excited"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Stupid"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Astronaut Suit"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Hardhat"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Intellect Serum"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

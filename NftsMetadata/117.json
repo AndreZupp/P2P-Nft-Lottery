@@ -1,0 +1,37 @@
+{
+  "image": "117.png",
+  "name": "Snake bros #117",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Light Gray"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Camo Hot Pink"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Neutral"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Smiling"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Mage"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Halo"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Nether Raygun"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

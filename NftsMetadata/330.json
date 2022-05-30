@@ -1,0 +1,37 @@
+{
+  "image": "330.png",
+  "name": "Snake bros #330",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Cotton Candy"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Abstract"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Smile"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Excited"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "My Name Is"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Halo"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Bat"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

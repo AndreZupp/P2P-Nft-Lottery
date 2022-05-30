@@ -1,0 +1,37 @@
+{
+  "image": "450.png",
+  "name": "Snake bros #450",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Capri"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Regular"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Stupid"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Neutral"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Mage"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Astronaut Helmet"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Mage"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

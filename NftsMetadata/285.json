@@ -1,0 +1,37 @@
+{
+  "image": "285.png",
+  "name": "Snake bros #285",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Mauve"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Camo Hot Pink"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Neutral"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Googly"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Football Jersey"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Astronaut Helmet"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Gold Chain"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

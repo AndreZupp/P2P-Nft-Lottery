@@ -1,0 +1,37 @@
+{
+  "image": "294.png",
+  "name": "Snake bros #294",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Platinum"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Abstract"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Stupid"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Neutral"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Astronaut Suit"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Officer"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Gold Rolex"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

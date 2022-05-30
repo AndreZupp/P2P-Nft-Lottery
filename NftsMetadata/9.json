@@ -1,0 +1,37 @@
+{
+  "image": "9.png",
+  "name": "Snake bros #9",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Baby Blue"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Camo Hot Pink"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Smile"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Stupid"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "My Name Is"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Dark Prince"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Intellect Serum"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

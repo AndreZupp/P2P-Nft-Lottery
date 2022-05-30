@@ -1,0 +1,37 @@
+{
+  "image": "489.png",
+  "name": "Snake bros #489",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Light Gray"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Chrome Turquoise"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Excited"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Googly"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Mage"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Hardhat"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Nether Raygun"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

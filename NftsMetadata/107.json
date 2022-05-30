@@ -1,0 +1,37 @@
+{
+  "image": "107.png",
+  "name": "Snake bros #107",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Magic Mint"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Damascus Steel"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Excited"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Angry"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Karate"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Hardhat"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Mage"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

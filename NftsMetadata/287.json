@@ -1,0 +1,37 @@
+{
+  "image": "287.png",
+  "name": "Snake bros #287",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Mauve"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Damascus Steel"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Smile"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Stupid"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Toga"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Fedora"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Nether Raygun"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

@@ -1,0 +1,37 @@
+{
+  "image": "495.png",
+  "name": "Snake bros #495",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Magic Mint"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Abstract"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Neutral"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Googly"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Police"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Dark Prince"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Nether Raygun"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

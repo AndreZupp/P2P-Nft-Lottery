@@ -1,0 +1,37 @@
+{
+  "image": "71.png",
+  "name": "Snake bros #71",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Cotton Candy"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Camo Hot Pink"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Neutral"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Angry"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Football Jersey"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Headphones"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Mage"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

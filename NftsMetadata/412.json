@@ -1,0 +1,37 @@
+{
+  "image": "412.png",
+  "name": "Snake bros #412",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Mauve"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "More Razzle"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Neutral"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Excited"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Police"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Dark Prince"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Popcorn"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}

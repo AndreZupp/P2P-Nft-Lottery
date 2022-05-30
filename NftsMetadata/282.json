@@ -1,0 +1,37 @@
+{
+  "image": "282.png",
+  "name": "Snake bros #282",
+  "description": "Snakes everywhere",
+  "external_url": "https://sneks.diamondhandshotel.com",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Lavender Blue"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Lava"
+    },
+    {
+      "trait_type": "Expression",
+      "value": "Excited"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Googly"
+    },
+    {
+      "trait_type": "Clothes",
+      "value": "Astronaut Suit"
+    },
+    {
+      "trait_type": "Headgear",
+      "value": "Hardhat"
+    },
+    {
+      "trait_type": "Accessories",
+      "value": "Intellect Serum"
+    }
+  ],
+  "compiler": "nft-inator.com"
+}
