@@ -17,5 +17,9 @@ contract CollectiblesNFT is ERC721URIStorage {
 
         return _tokenIds;
     }
+
+    function getTokenID() public returns(uint256){
+        return _tokenIds;
+    }
 }
 

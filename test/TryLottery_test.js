@@ -21,17 +21,14 @@ const metadata = ["donkey","around","river","yourself","youth","stairs"
 
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const cadd = "0xCF7d816B559322f0865D114b958627869aAfbDF9" //Contract address
-
-console.log(metadata[0]);
-
+const cadd = "0xbdE15CFFA1A89BFaBcee982FF346754E5eEeD56C"; //Contract address
 
 describe("Minting test", function () {
   it("Minting 20 NFTs", async function () {
     const [owner] = await ethers.getSigners();
-    const myContract = await ethers.getContractAt("MyNft2", cadd);
+    const myContract = await ethers.getContractAt("TryLottery", cadd);
     for(let i = 0; i < 20 ; i++){
-        myContract.mint(metadata[i])
+        myContract._mintCollectible(10,metadata[i]);
         console.log('Minted number ', i);
     }
   });
