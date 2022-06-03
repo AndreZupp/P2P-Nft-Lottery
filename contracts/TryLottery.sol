@@ -12,17 +12,16 @@ contract TryLottery is Ownable {
     uint8[6] numbers;
     uint256 ticketId;
   }
-
-  address payable contractAddress;
-
+  
   bool public lotteryStatus;
 
   uint256 public soldTickets;
   uint256 public endingBlock;
-  uint public roundDuration;
   uint256 public ticketPrice;
   uint256 public numberOfCollectibles;
   uint256 private seed;
+  uint256 public roundId;
+  uint public roundDuration;
 
   Ticket[] tickets;
   Ticket winningTicket;
@@ -33,10 +32,15 @@ contract TryLottery is Ownable {
   CollectiblesNFT private nftContract;
 
   event TicketBought(address indexed _ticketOwner, Ticket indexed _boughtTicket);
-  event TicketRefunded(address indexed _refuncAddress, Ticket indexed _refundedTicket, uint256 amount, string message);
-  constructor(address _t){
-    nftContract = CollectiblesNFT(_t);
+  event TicketRefunded(address indexed _refundAddress, Ticket indexed _refundedTicket, uint256 indexed amount, string message);
+  event TicketRewarded(address indexed _winnerAddress, Ticket indexed _winningTicket, uint256 indexed tokenID, string message);
+  event WhereIAm(string message);
+  event WinningTicketExtracted(Ticket indexed _winningTicket, uint256 indexed roundId, string message);
+
+  constructor(){
+    nftContract = new CollectiblesNFT('TRYLottery', 'TRYL');
     soldTickets = 0;
+    roundId = 0;
     ticketPrice = 10000000 gwei;
     numberOfCollectibles = 0;
     seed = 0;
@@ -68,16 +72,23 @@ contract TryLottery is Ownable {
   }
 
   function checkRound() public {
-    require(lotteryStatus, 'Lottery is Not Opened');
     if(block.number >= endingBlock){
-      toggleLotteryStatus();
       winningTicket = Ticket(createTicketNumber(), soldTickets++);
+      emit WinningTicketExtracted(winningTicket, roundId, 'This is the round winning ticket');
+      emit WhereIAm("Checking winners");
       checkWinners();
+      //cleanData(); //Notice that since mappings need the list of keys to be deleted they're deleted while traversed in checkwinner function
+      //toggleLotteryStatus();
     }
   }
 
+  function cleanData() private{
+    delete tickets;
+    soldTickets = 0;
+    roundId++;
+  }
+
   function createTicketNumber() public returns(uint8[6] memory) {
-    checkRound();
     uint8[6]  memory _ticketNumber;
 
     for(uint8 i = 0; i < 5 ; i++){
@@ -115,14 +126,20 @@ contract TryLottery is Ownable {
   }
 
   function awardCollectible(uint256 ticketNumber, uint8 class) private {
-    nftContract.transferFrom(address(this), ticketOwners[ticketNumber], collectibles[class-1][createRandom(collectibles[class].length)]);
+    uint256 rewardTokenId = collectibles[class-1][createRandom(collectibles[class].length)];
+    nftContract.transferFrom(address(this), ticketOwners[ticketNumber], rewardTokenId);
+    emit TicketRewarded(ticketOwners[ticketNumber], tickets[ticketNumber], rewardTokenId, 'Winning ticket log' );
+
     delete collectibles[class];
+    delete ticketOwners[ticketNumber];
     numberOfCollectibles--;
   }
 
   function closeLottery() external onlyOwner{
     require(lotteryStatus, 'Lottery is alredy closed');
     refund();
+    payable(this.owner()).transfer(address(this).balance);
+    toggleLotteryStatus();
   }
 
   function getTicket(uint i) view public returns(uint8[6] memory){
@@ -136,8 +153,8 @@ contract TryLottery is Ownable {
       emit TicketRefunded(ticketOwners[i],  tickets[i], ticketPrice, "Your ticket has been refunded to your address");
       delete ticketOwners[i];
     }
+    cleanData(); 
   }
-
 
   function checkWinners() private {
     uint matches;
@@ -150,6 +167,11 @@ contract TryLottery is Ownable {
             matches++;
       }
       powerBallMatch = tickets[i].numbers[5] == winningTicket.numbers[5];
+      if(!powerBallMatch && matches == 0){
+        emit WhereIAm("0 Condition");
+        //delete ticketOwners[i];
+        continue;
+      }
       if(matches == 5){
           if(powerBallMatch)
             awardCollectible(i,1);

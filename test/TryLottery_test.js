@@ -21,15 +21,16 @@ const metadata = ["donkey","around","river","yourself","youth","stairs"
 
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const cadd = "0x78EE305c65A3ad00FB6d0C240464682C3b4DCF51"; //Contract address
+const cadd = "0x5f66c7e0954B5c620744Bcf22d673Cbe3B4F7653"; //Contract address
 
 describe("Minting test", function () {
-/it("Minting 100 NFTs", async function () {
+  it("Minting 100 NFTs", async function () {
     const [owner] = await ethers.getSigners();
     const myContract = await ethers.getContractAt("TryLottery", cadd);
-    for(let i = 0; i < 100 ; i++){
-        myContract.createCollectible(metadata[i]);
+    for(let i = 0; i < 10 ; i++){
+        await myContract.createCollectible(metadata[i]);
     }
+    done();
     console.log("All the minting transaction have been sent");
 
   });
