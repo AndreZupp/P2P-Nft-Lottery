@@ -44,8 +44,12 @@ contract TryLottery is Ownable {
     ticketPrice = 10000000 gwei;
     numberOfCollectibles = 0;
     seed = 0;
-    roundDuration = 10;
+    roundDuration = 40;
   } 
+
+  function setRoundDuration(uint tmp) public {
+    roundDuration = tmp;
+  }
 
   function openLottery() external onlyOwner {
     require(!lotteryStatus,'Lottery is alredy opened');
@@ -54,7 +58,7 @@ contract TryLottery is Ownable {
     toggleLotteryStatus();
   }
 
-  function toggleLotteryStatus() private {
+  function toggleLotteryStatus() public {
     lotteryStatus = !lotteryStatus;
   }
   
@@ -78,7 +82,7 @@ contract TryLottery is Ownable {
       emit WhereIAm("Checking winners");
       checkWinners();
       //cleanData(); //Notice that since mappings need the list of keys to be deleted they're deleted while traversed in checkwinner function
-      //toggleLotteryStatus();
+      toggleLotteryStatus();
     }
   }
 
@@ -130,9 +134,9 @@ contract TryLottery is Ownable {
     nftContract.transferFrom(address(this), ticketOwners[ticketNumber], rewardTokenId);
     emit TicketRewarded(ticketOwners[ticketNumber], tickets[ticketNumber], rewardTokenId, 'Winning ticket log' );
 
-    delete collectibles[class];
-    delete ticketOwners[ticketNumber];
-    numberOfCollectibles--;
+    //delete collectibles[class];
+    //delete ticketOwners[ticketNumber];
+    //numberOfCollectibles--;
   }
 
   function closeLottery() external onlyOwner{
