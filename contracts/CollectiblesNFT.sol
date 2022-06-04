@@ -8,6 +8,9 @@ contract CollectiblesNFT is ERC721URIStorage {
     uint256 private _tokenIds;
 
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {}
+
+    
+
     function mint(address owner, string memory tokenURI)
         public
         returns (uint256)

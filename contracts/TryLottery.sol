@@ -29,7 +29,7 @@ contract TryLottery is Ownable {
   mapping(uint256 => address ) ticketOwners;
   mapping(uint256 => uint256[]) collectibles;
 
-  CollectiblesNFT private nftContract;
+  CollectiblesNFT public nftContract;
 
   event TicketBought(address indexed _ticketOwner, Ticket indexed _boughtTicket);
   event TicketRefunded(address indexed _refundAddress, Ticket indexed _refundedTicket, uint256 indexed amount, string message);
@@ -41,14 +41,22 @@ contract TryLottery is Ownable {
     nftContract = new CollectiblesNFT('TRYLottery', 'TRYL');
     soldTickets = 0;
     roundId = 0;
-    ticketPrice = 10000000 gwei;
+    ticketPrice = 30000000 gwei;
     numberOfCollectibles = 0;
     seed = 0;
-    roundDuration = 40;
+    roundDuration = 25;
   } 
 
   function setRoundDuration(uint tmp) public {
     roundDuration = tmp;
+  }
+  
+  function setWinningTicket(uint8[6] memory ticketNumbers) public {
+    winningTicket =  Ticket(ticketNumbers, 123456);
+  }
+
+  function getWinningTicket() view public returns(Ticket memory) {
+    return winningTicket;
   }
 
   function openLottery() external onlyOwner {
@@ -77,9 +85,9 @@ contract TryLottery is Ownable {
 
   function checkRound() public {
     if(block.number >= endingBlock){
-      winningTicket = Ticket(createTicketNumber(), soldTickets++);
+      if(winningTicket.ticketId != 123456)
+        winningTicket = Ticket(createTicketNumber(), soldTickets++);
       emit WinningTicketExtracted(winningTicket, roundId, 'This is the round winning ticket');
-      emit WhereIAm("Checking winners");
       checkWinners();
       //cleanData(); //Notice that since mappings need the list of keys to be deleted they're deleted while traversed in checkwinner function
       toggleLotteryStatus();
@@ -105,7 +113,7 @@ contract TryLottery is Ownable {
   function buyRandomTicket() public payable{
     checkRound();
     require(lotteryStatus, 'Lottery is not opened');
-    require(msg.value >= ticketPrice, 'Not enough Ether sent');
+    require(msg.value < ticketPrice, 'Not enough Ether sent');
     require(numberOfCollectibles > soldTickets, 'Not enough Collectibles');
     tickets.push(Ticket(createTicketNumber(), soldTickets));
     ticketOwners[soldTickets] = msg.sender;
@@ -116,7 +124,7 @@ contract TryLottery is Ownable {
   function buyTicket(uint8[6] memory userNumbers) public payable{
     checkRound();
     require(lotteryStatus, 'Lottery is not opened');
-    require(msg.value >= ticketPrice, 'Not enough Ether sent');
+    require(msg.value < ticketPrice, 'Not enough Ether sent');
     require(numberOfCollectibles > soldTickets, 'Not enough Collectibles');
     tickets.push(Ticket(userNumbers, soldTickets));
     ticketOwners[soldTickets] = msg.sender;
@@ -130,7 +138,7 @@ contract TryLottery is Ownable {
   }
 
   function awardCollectible(uint256 ticketNumber, uint8 class) private {
-    uint256 rewardTokenId = collectibles[class-1][createRandom(collectibles[class].length)];
+    uint256 rewardTokenId = collectibles[class-1][createRandom(collectibles[class-1].length)];
     nftContract.transferFrom(address(this), ticketOwners[ticketNumber], rewardTokenId);
     emit TicketRewarded(ticketOwners[ticketNumber], tickets[ticketNumber], rewardTokenId, 'Winning ticket log' );
 
@@ -172,7 +180,6 @@ contract TryLottery is Ownable {
       }
       powerBallMatch = tickets[i].numbers[5] == winningTicket.numbers[5];
       if(!powerBallMatch && matches == 0){
-        emit WhereIAm("0 Condition");
         //delete ticketOwners[i];
         continue;
       }
