@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.14;
+pragma solidity ^0.8.10;
 
 import "./CollectiblesNFT.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -21,6 +21,7 @@ contract TryLottery is Ownable {
   uint256 public numberOfCollectibles;
   uint256 private seed;
   uint256 public roundId;
+  uint256 public balance;
   uint public roundDuration;
 
   Ticket[] tickets;
@@ -40,6 +41,7 @@ contract TryLottery is Ownable {
 
   constructor(){
     nftContract = new CollectiblesNFT('TRYLottery', 'TRYL');
+    nftContract.setOwnerAddress();
     soldTickets = 0;
     roundId = 0;
     ticketPrice = 30000000 gwei;
@@ -60,7 +62,9 @@ contract TryLottery is Ownable {
     return winningTicket;
   }
 
-  function openLottery() external onlyOwner {
+  function startNewRound() external onlyOwner {
+    endingBlock = block.number + roundDuration;
+    roundId++;
     require(!lotteryStatus,'Lottery is alredy opened');
     require(numberOfCollectibles > 0, 'No collectibles available for the winners!');
     endingBlock = block.number + roundDuration;
@@ -87,18 +91,31 @@ contract TryLottery is Ownable {
   function checkRound() public {
     if(block.number >= endingBlock){
       if(winningTicket.ticketId != 123456)
-        winningTicket = Ticket(createTicketNumber(), soldTickets++);
+      drawNumbers();
       emit WinningTicketExtracted(winningTicket, roundId, 'This is the round winning ticket');
       checkWinners();
-      //cleanData(); //Notice that since mappings need the list of keys to be deleted they're deleted while traversed in checkwinner function
+      cleanData(); //Notice that since mappings need the list of keys to be deleted they're deleted while traversed in checkwinner function
       toggleLotteryStatus();
     }
+  }
+
+  function drawNumbers() private {
+    winningTicket = Ticket(createTicketNumber(), soldTickets+1);
   }
 
   function cleanData() private{
     delete tickets;
     soldTickets = 0;
     roundId++;
+    delete collectibles[0];
+    delete collectibles[1];
+    delete collectibles[2];
+    delete collectibles[3];
+    delete collectibles[4];
+    delete collectibles[5];
+    delete collectibles[6];
+    delete collectibles[7];
+    numberOfCollectibles = 0;
   }
 
   function createTicketNumber() public returns(uint8[6] memory) {
@@ -114,7 +131,7 @@ contract TryLottery is Ownable {
   function buyRandomTicket() public payable{
     checkRound();
     require(lotteryStatus, 'Lottery is not opened');
-    require(msg.value < ticketPrice, 'Not enough Ether sent');
+    require(msg.value >= ticketPrice, 'Not enough Ether sent');
     require(numberOfCollectibles > soldTickets, 'Not enough Collectibles');
     tickets.push(Ticket(createTicketNumber(), soldTickets));
     ticketOwners[soldTickets] = msg.sender;
@@ -122,10 +139,10 @@ contract TryLottery is Ownable {
 
   }
 
-  function buyTicket(uint8[6] memory userNumbers) public payable{
+  function buy(uint8[6] memory userNumbers) public payable{
     checkRound();
     require(lotteryStatus, 'Lottery is not opened');
-    require(msg.value < ticketPrice, 'Not enough Ether sent');
+    require(msg.value >= ticketPrice, 'Not enough Ether sent');
     require(numberOfCollectibles > soldTickets, 'Not enough Collectibles');
     tickets.push(Ticket(userNumbers, soldTickets));
     ticketOwners[soldTickets] = msg.sender;
@@ -133,25 +150,24 @@ contract TryLottery is Ownable {
     soldTickets++; 
   }
 
-  function createCollectible(string memory _metadata) public onlyOwner {
-    collectibles[numberOfCollectibles % 8].push(nftContract.mint(address(this),_metadata));
+  function mint(string memory _metadata) public onlyOwner {
+    collectibles[numberOfCollectibles % 8].push(nftContract.mint(_metadata));
     numberOfCollectibles++;
   }
 
-  function awardCollectible(uint256 ticketNumber, uint8 class) private {
+  function givePrizes(uint256 ticketNumber, uint8 class) private {
     uint256 rewardTokenId = collectibles[class-1][createRandom(collectibles[class-1].length)];
     emit LogTmp(class-1, rewardTokenId, ticketOwners[ticketNumber]);
-    nftContract.transferFrom(address(this), ticketOwners[ticketNumber], rewardTokenId);
+    //nftContract.transferNft(address(ticketOwners[ticketNumber]), rewardTokenId);
+    nftContract.transferFrom(address(this), address(ticketOwners[ticketNumber]), rewardTokenId);
     emit TicketRewarded(ticketOwners[ticketNumber], tickets[ticketNumber], rewardTokenId, 'Winning ticket log' );
-    //delete collectibles[class];
-    //delete ticketOwners[ticketNumber];
-    //numberOfCollectibles--;
+    numberOfCollectibles--;
   }
 
-  function closeLottery() external onlyOwner{
+  function closeLottery() external payable onlyOwner{
     require(lotteryStatus, 'Lottery is alredy closed');
     refund();
-    payable(this.owner()).transfer(address(this).balance);
+    cleanData(); 
     toggleLotteryStatus();
   }
 
@@ -159,18 +175,13 @@ contract TryLottery is Ownable {
     return tickets[i].numbers;
   }
 
-  function refund() private {
-    require(address(this).balance >= tickets.length * ticketPrice, 'Not enough fund to repay the owners');
-    for(uint i = 0; i < tickets.length; i++){
+  function refund() public payable {
+    for(uint256 i = 0; i < tickets.length; i++){
+      balance = address(this).balance;
       payable(ticketOwners[i]).transfer(ticketPrice);
       emit TicketRefunded(ticketOwners[i],  tickets[i], ticketPrice, "Your ticket has been refunded to your address");
       delete ticketOwners[i];
     }
-    cleanData(); 
-  }
-
-  function transferWhatISay(uint256 _tokenId, address _address) public {
-    nftContract.safeTransferFrom(address(this), _address, _tokenId);
   }
 
   function checkWinners() private {
@@ -190,30 +201,29 @@ contract TryLottery is Ownable {
       }
       if(matches == 5){
           if(powerBallMatch)
-            awardCollectible(i,1);
+            givePrizes(i,1);
           else
-            awardCollectible(i,2);
+            givePrizes(i,2);
           continue;
         }
       if(matches == 4){
         if(powerBallMatch)
-            awardCollectible(i,3);
+            givePrizes(i,3);
         else
-          awardCollectible(i,4);
+          givePrizes(i,4);
         continue;
           
         }
       if(matches > 0){
         if(powerBallMatch)
           matches++;
-        awardCollectible(i,uint8(8-matches));
+        givePrizes(i,uint8(8-matches));
         continue;
         }
       if(powerBallMatch){
-         awardCollectible(i, 8);
+         givePrizes(i, 8);
       }
     }
   }
 
 }
-

@@ -29,7 +29,7 @@ describe("Try lottery testing", function () {
     const [owner] = await ethers.getSigners();
     const myContract = await ethers.getContractAt("TryLottery", cadd);
     for(let i = 0; i < 30 ; i++){
-        await myContract.createCollectible(metadata[i]);
+        await myContract.mint(metadata[i]);
     }
     console.log("All the minting transaction have been sent");
   });
@@ -39,7 +39,7 @@ describe("Try lottery testing", function () {
     /*const trans = await owner.sendTransaction({
     to: cadd,
     value: ethers.utils.parseEther("1.0")});*/
-    const lottery = await onwerContractInstance.openLottery();
+    const lottery = await onwerContractInstance.startNewRound();
     const address1ContractInstance = onwerContractInstance.connect(address1);
     const address2ContractInstance = onwerContractInstance.connect(address2);
     const options = {value: ethers.utils.parseEther("0.3")}

@@ -54,8 +54,7 @@ describe("Try lottery testing", function () {
     const result7 = await address1ContractInstance.buy([12,22,12,20,24,2],options) //Wins a class 7 Ticket
     const result8 = await address2ContractInstance.buy([13,22,12,20,24,1],options) //Wins a class 8 Ticket
     //Now we are going to manipulate the lottery for testing purposes
-    const winningTicket = await onwerContractInstance.setWinningTicket([12,21,11,19,23,1])
-
+    const checkround = await onwerContractInstance.closeLottery();
   });
 
 });
