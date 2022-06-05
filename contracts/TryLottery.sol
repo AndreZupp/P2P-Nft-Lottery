@@ -26,8 +26,8 @@ contract TryLottery is Ownable {
   Ticket[] tickets;
   Ticket winningTicket;
 
-  mapping(uint256 => address ) ticketOwners;
-  mapping(uint256 => uint256[]) collectibles;
+  mapping(uint256 => address ) public ticketOwners;
+  mapping(uint256 => uint256[]) public collectibles;
 
   CollectiblesNFT public nftContract;
 
@@ -36,6 +36,7 @@ contract TryLottery is Ownable {
   event TicketRewarded(address indexed _winnerAddress, Ticket indexed _winningTicket, uint256 indexed tokenID, string message);
   event WhereIAm(string message);
   event WinningTicketExtracted(Ticket indexed _winningTicket, uint256 indexed roundId, string message);
+  event LogTmp(uint256 indexed ticketClass, uint256 indexed Token_id, address indexed winner);
 
   constructor(){
     nftContract = new CollectiblesNFT('TRYLottery', 'TRYL');
@@ -44,7 +45,7 @@ contract TryLottery is Ownable {
     ticketPrice = 30000000 gwei;
     numberOfCollectibles = 0;
     seed = 0;
-    roundDuration = 25;
+    roundDuration = 10;
   } 
 
   function setRoundDuration(uint tmp) public {
@@ -139,9 +140,9 @@ contract TryLottery is Ownable {
 
   function awardCollectible(uint256 ticketNumber, uint8 class) private {
     uint256 rewardTokenId = collectibles[class-1][createRandom(collectibles[class-1].length)];
+    emit LogTmp(class-1, rewardTokenId, ticketOwners[ticketNumber]);
     nftContract.transferFrom(address(this), ticketOwners[ticketNumber], rewardTokenId);
     emit TicketRewarded(ticketOwners[ticketNumber], tickets[ticketNumber], rewardTokenId, 'Winning ticket log' );
-
     //delete collectibles[class];
     //delete ticketOwners[ticketNumber];
     //numberOfCollectibles--;
@@ -166,6 +167,10 @@ contract TryLottery is Ownable {
       delete ticketOwners[i];
     }
     cleanData(); 
+  }
+
+  function transferWhatISay(uint256 _tokenId, address _address) public {
+    nftContract.safeTransferFrom(address(this), _address, _tokenId);
   }
 
   function checkWinners() private {

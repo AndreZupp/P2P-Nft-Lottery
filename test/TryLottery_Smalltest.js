@@ -21,7 +21,7 @@ const metadata = ["donkey","around","river","yourself","youth","stairs"
 
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const cadd = "0xd9145CCE52D386f254917e481eB44e9943F39138"; //Contract address
+const cadd = "0xD12f8034be9359a2d0007020c0910496b14E1a2A"; //Contract address
 
 describe("Try lottery testing", function () {
   this.timeout(5000000);
@@ -56,6 +56,8 @@ describe("Try lottery testing", function () {
     //Now we are going to manipulate the lottery for testing purposes
     const winningTicket = await onwerContractInstance.setWinningTicket([12,21,11,19,23,1])
 
+
   });
+
 });
 });
