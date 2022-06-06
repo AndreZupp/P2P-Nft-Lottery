@@ -21,7 +21,7 @@ const metadata = ["donkey","around","river","yourself","youth","stairs"
 
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const cadd = "0xF22188b39345EcEf4D7afD8c43E235918405a0B6"; //Contract address
+const cadd = "0xE969103337e6fD8cE357EE81dF07c0eEF6679b61"; //Contract address
 
 describe("Try lottery testing", function () {
   this.timeout(5000000);
@@ -36,17 +36,24 @@ describe("Try lottery testing", function () {
   it("Buying test" async function (){
     const [owner, address1, address2] = await ethers.getSigners();
     const onwerContractInstance = await ethers.getContractAt("TryLottery", cadd);
-    /*const trans = await owner.sendTransaction({
-    to: cadd,
-    value: ethers.utils.parseEther("1.0")});*/
+
+    onwerContractInstance.on("WinningTicketExtracted", async (_winningTicket, roundId, event) =>{
+        console.log("The user with address  ", _ticketOwner, " has bought a ticket \n \n");
+    });
+
+    onwerContractInstance.on("TicketRewarded", async (_winnerAddress, _winningTicket, ticketClass, message, event) => {
+        console.log("The user  ", _winnerAddress, "has won the collectible of class ", JSON.parse(ticketClass), "\n \n");
+      });
+    const lotteryDuration = await onwerContractInstance.setRoundDuration(26);
     const lottery = await onwerContractInstance.startNewRound();
     const address1ContractInstance = onwerContractInstance.connect(address1);
     const address2ContractInstance = onwerContractInstance.connect(address2);
-    const options = {value: ethers.utils.parseEther("0.3")}
+    const options = {value: ethers.utils.parseEther("0.03")}
     for(let i = 0; i < 12; i++){
       const result1 = await address1ContractInstance.buyRandomTicket(options);
       const result2 = await address2ContractInstance.buyRandomTicket(options);
     }
+    const checkRound = onwerContractInstance.checkRound();
   });
 });
 });

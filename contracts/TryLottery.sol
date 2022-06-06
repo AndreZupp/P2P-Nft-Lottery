@@ -18,25 +18,23 @@ contract TryLottery is Ownable {
   uint256 public soldTickets;
   uint256 public endingBlock;
   uint256 public ticketPrice;
-  uint256 public numberOfCollectibles;
+  uint256 private numberOfCollectibles;
   uint256 private seed;
   uint256 public roundId;
-  uint256 public balance;
   uint public roundDuration;
 
-  Ticket[] tickets;
-  Ticket winningTicket;
+  Ticket[] private tickets;
+  Ticket private winningTicket;
 
-  mapping(uint256 => address ) public ticketOwners;
-  mapping(uint256 => uint256[]) public collectibles;
+  mapping(uint256 => address ) private ticketOwners;
+  mapping(uint256 => uint256[]) private collectibles;
 
-  CollectiblesNFT public nftContract;
+  CollectiblesNFT private nftContract;
 
   event TicketBought(address indexed _ticketOwner, Ticket indexed _boughtTicket);
-  event TicketRefunded(address indexed _refundAddress, Ticket indexed _refundedTicket, uint256 indexed amount, string message);
-  event TicketRewarded(address indexed _winnerAddress, Ticket indexed _winningTicket, uint256 indexed tokenID, string message);
-  event WhereIAm(string message);
-  event WinningTicketExtracted(Ticket indexed _winningTicket, uint256 indexed roundId, string message);
+  event TicketRefunded(uint256 indexed amount);
+  event TicketRewarded(address indexed _winnerAddress, Ticket indexed _winningTicket, uint256 indexed ticketClass);
+  event WinningTicketExtracted(Ticket indexed _winningTicket, uint256 indexed roundId);
   event LogTmp(uint256 indexed ticketClass, uint256 indexed Token_id, address indexed winner);
 
   constructor(){
@@ -50,28 +48,33 @@ contract TryLottery is Ownable {
     roundDuration = 10;
   } 
 
-  function setRoundDuration(uint tmp) public {
-    roundDuration = tmp;
+  function setRoundDuration(uint _newDuration) external onlyOwner {
+    require(!lotteryStatus, 'Can not change the lottery duration while it is opened');
+    roundDuration = _newDuration;
   }
   
-  function setWinningTicket(uint8[6] memory ticketNumbers) public {
+  //This function exists only for test purposes, to check that everything works
+  function setWinningTicket(uint8[6] memory ticketNumbers) external onlyOwner {
     winningTicket =  Ticket(ticketNumbers, 123456);
+    emit WinningTicketExtracted(winningTicket, roundId);
+
   }
+
 
   function getWinningTicket() view public returns(Ticket memory) {
     return winningTicket;
   }
 
   function startNewRound() external onlyOwner {
-    endingBlock = block.number + roundDuration;
-    roundId++;
     require(!lotteryStatus,'Lottery is alredy opened');
     require(numberOfCollectibles > 0, 'No collectibles available for the winners!');
+
+    roundId++;
     endingBlock = block.number + roundDuration;
     toggleLotteryStatus();
   }
 
-  function toggleLotteryStatus() public {
+  function toggleLotteryStatus() private {
     lotteryStatus = !lotteryStatus;
   }
   
@@ -89,15 +92,18 @@ contract TryLottery is Ownable {
   }
 
   function checkRound() public {
+    require(lotteryStatus, 'Can not check the round of a closed lottery');
     if(block.number >= endingBlock){
-      if(winningTicket.ticketId != 123456)
-      drawNumbers();
-      emit WinningTicketExtracted(winningTicket, roundId, 'This is the round winning ticket');
+      if(winningTicket.ticketId != 123456) //Case of test lottery, the winning ticket is assigned ID 123456
+        drawNumbers();
+      emit WinningTicketExtracted(winningTicket, roundId);
       checkWinners();
+      payable(this.owner()).transfer(address(this).balance);
       cleanData(); //Notice that since mappings need the list of keys to be deleted they're deleted while traversed in checkwinner function
       toggleLotteryStatus();
     }
   }
+
 
   function drawNumbers() private {
     winningTicket = Ticket(createTicketNumber(), soldTickets+1);
@@ -118,7 +124,7 @@ contract TryLottery is Ownable {
     numberOfCollectibles = 0;
   }
 
-  function createTicketNumber() public returns(uint8[6] memory) {
+  function createTicketNumber() private returns(uint8[6] memory) {
     uint8[6]  memory _ticketNumber;
 
     for(uint8 i = 0; i < 5 ; i++){
@@ -133,6 +139,7 @@ contract TryLottery is Ownable {
     require(lotteryStatus, 'Lottery is not opened');
     require(msg.value >= ticketPrice, 'Not enough Ether sent');
     require(numberOfCollectibles > soldTickets, 'Not enough Collectibles');
+
     tickets.push(Ticket(createTicketNumber(), soldTickets));
     ticketOwners[soldTickets] = msg.sender;
     soldTickets++;
@@ -140,7 +147,7 @@ contract TryLottery is Ownable {
   }
 
   function buy(uint8[6] memory userNumbers) public payable{
-    checkRound();
+    checkRound(); 
     require(lotteryStatus, 'Lottery is not opened');
     require(msg.value >= ticketPrice, 'Not enough Ether sent');
     require(numberOfCollectibles > soldTickets, 'Not enough Collectibles');
@@ -150,36 +157,32 @@ contract TryLottery is Ownable {
     soldTickets++; 
   }
 
-  function mint(string memory _metadata) public onlyOwner {
+  function mint(string memory _metadata) external onlyOwner {
     collectibles[numberOfCollectibles % 8].push(nftContract.mint(_metadata));
     numberOfCollectibles++;
   }
 
   function givePrizes(uint256 ticketNumber, uint8 class) private {
-    uint256 rewardTokenId = collectibles[class-1][createRandom(collectibles[class-1].length)];
-    emit LogTmp(class-1, rewardTokenId, ticketOwners[ticketNumber]);
-    //nftContract.transferNft(address(ticketOwners[ticketNumber]), rewardTokenId);
-    nftContract.transferFrom(address(this), address(ticketOwners[ticketNumber]), rewardTokenId);
-    emit TicketRewarded(ticketOwners[ticketNumber], tickets[ticketNumber], rewardTokenId, 'Winning ticket log' );
+    uint256 rewardTokenId = collectibles[class-1][collectibles[class-1].length - 1];
+    collectibles[class-1].pop();
+    emit LogTmp(class, rewardTokenId, ticketOwners[ticketNumber]);
+    nftContract.transferNft(address(ticketOwners[ticketNumber]), rewardTokenId);
+    //nftContract.transferFrom(address(this), address(ticketOwners[ticketNumber]), rewardTokenId);
+    emit TicketRewarded(ticketOwners[ticketNumber], tickets[ticketNumber], class);
     numberOfCollectibles--;
   }
 
   function closeLottery() external payable onlyOwner{
     require(lotteryStatus, 'Lottery is alredy closed');
     refund();
+    emit TicketRefunded(ticketPrice * soldTickets);
     cleanData(); 
     toggleLotteryStatus();
   }
 
-  function getTicket(uint i) view public returns(uint8[6] memory){
-    return tickets[i].numbers;
-  }
-
-  function refund() public payable {
+  function refund() private  onlyOwner{
     for(uint256 i = 0; i < tickets.length; i++){
-      balance = address(this).balance;
       payable(ticketOwners[i]).transfer(ticketPrice);
-      emit TicketRefunded(ticketOwners[i],  tickets[i], ticketPrice, "Your ticket has been refunded to your address");
       delete ticketOwners[i];
     }
   }
@@ -206,22 +209,51 @@ contract TryLottery is Ownable {
             givePrizes(i,2);
           continue;
         }
+
       if(matches == 4){
         if(powerBallMatch)
             givePrizes(i,3);
         else
           givePrizes(i,4);
-        continue;
-          
+        continue;        
         }
-      if(matches > 0){
-        if(powerBallMatch)
-          matches++;
-        givePrizes(i,uint8(8-matches));
-        continue;
+
+      if(matches == 3){
+        if(powerBallMatch){
+          givePrizes(i,4);
+          continue;
         }
-      if(powerBallMatch){
-         givePrizes(i, 8);
+        else{
+          givePrizes(i,5);
+          continue;
+        }
+      }
+
+      if(matches == 2){
+        if(powerBallMatch){
+         givePrizes(i, 5);
+         continue;
+        }
+        else{
+          givePrizes(i,6);
+          continue;
+        }
+      }
+
+      if(matches == 1){
+        if(powerBallMatch){
+         givePrizes(i, 6);
+         continue;
+        }
+        else{
+          givePrizes(i,7);
+          continue;
+        }
+      }
+      
+      if(powerBallMatch && matches == 0){
+          givePrizes(i,8);
+          continue;
       }
     }
   }
