@@ -21,39 +21,54 @@ const metadata = ["donkey","around","river","yourself","youth","stairs"
 
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const cadd = "0xE969103337e6fD8cE357EE81dF07c0eEF6679b61"; //Contract address
+const cadd = "0xd9145CCE52D386f254917e481eB44e9943F39138"; //Contract address
 
 describe("Try lottery testing", function () {
+  //Setting Async timeout so it doens't run out of time
   this.timeout(5000000);
+
+  //Minting test, 60 NFTs
   it("Minting NFTs", async function () {
     const [owner] = await ethers.getSigners();
     const myContract = await ethers.getContractAt("TryLottery", cadd);
-    for(let i = 0; i < 30 ; i++){
+    for(let i = 0; i < 60 ; i++){
         await myContract.mint(metadata[i]);
     }
     console.log("All the minting transaction have been sent");
   });
-  it("Buying test" async function (){
+
+  //Buying and then calling transaction to get to the M-th block so the lottery gets closed
+  it("Buying test", async function (){
+
+    //Getting references to addresses
     const [owner, address1, address2] = await ethers.getSigners();
     const onwerContractInstance = await ethers.getContractAt("TryLottery", cadd);
 
-    onwerContractInstance.on("WinningTicketExtracted", async (_winningTicket, roundId, event) =>{
-        console.log("The user with address  ", _ticketOwner, " has bought a ticket \n \n");
+    //Adding event listeners
+    onwerContractInstance.on("TicketBought", async (_ticketOwner, _boughtTicket, event) =>{
+        console.log("The user with address  ", _ticketOwner, " has bought a ticket","\n \n");
     });
 
     onwerContractInstance.on("TicketRewarded", async (_winnerAddress, _winningTicket, ticketClass, message, event) => {
         console.log("The user  ", _winnerAddress, "has won the collectible of class ", JSON.parse(ticketClass), "\n \n");
       });
+
+    //Set lottery duration
     const lotteryDuration = await onwerContractInstance.setRoundDuration(26);
+    //Open the lottery
     const lottery = await onwerContractInstance.startNewRound();
+
+    //Open connection from other addresses to the contract
     const address1ContractInstance = onwerContractInstance.connect(address1);
     const address2ContractInstance = onwerContractInstance.connect(address2);
     const options = {value: ethers.utils.parseEther("0.03")}
+    //Buy tickets
     for(let i = 0; i < 12; i++){
       const result1 = await address1ContractInstance.buyRandomTicket(options);
       const result2 = await address2ContractInstance.buyRandomTicket(options);
     }
+    //Calls to function to skip some block
     const checkRound = onwerContractInstance.checkRound();
+    const checkround2 = await onwerContractInstance.checkRound();
   });
-});
 });
